@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<title>Index</title>
+
+
+</h:head>
+<h:body>
+	<p:growl widgetVar="growlWV">
+		<p:autoUpdate />
+	</p:growl>
+
+	<center>
+		<p:outputLabel value="#{indexMBean.nome}" />
+		<br /> <br />
+		<h:form enctype="multipart/form-data"
+			title="Upload da planilha de dados" style="width: 50%;">
+			<p:fileUpload fileUploadListener="#{indexMBean.uploadPlanilha}"
+				multiple="false" allowTypes="/(\.|\/)(xlsx)$/" />
+
+		</h:form>
+	</center>
+</h:body>
+</html>
