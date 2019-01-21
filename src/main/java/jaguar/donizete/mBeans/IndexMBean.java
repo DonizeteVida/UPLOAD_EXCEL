@@ -75,7 +75,7 @@ public class IndexMBean {
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
-				.setDatabaseUrl("https://graficosdados.firebaseio.com/").build();
+				.setDatabaseUrl("https://graficosonline-5d22f.firebaseio.com/").build();
 
 		FirebaseApp.initializeApp(options);
 	}
