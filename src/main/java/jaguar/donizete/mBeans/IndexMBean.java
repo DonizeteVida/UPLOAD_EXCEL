@@ -12,10 +12,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -38,8 +38,7 @@ public class IndexMBean {
 	private String nome = "Importar planilha excel";
 	private UploadedFile planilha;
 	private File planilhaFile;
-	DatabaseReference database;
-	Integer incre = 0;
+	private DatabaseReference database;
 
 	public IndexMBean() {
 		try {
@@ -54,14 +53,14 @@ public class IndexMBean {
 
 	}
 
-	private void salvarAlgumDado(String s, String c) {
-		incre++;
+	private void salvarAlgumDado(String valor, String chave) {
 
-		database.child(c).setValue(s, new CompletionListener() {
+		database.child(chave).setValue(valor, new CompletionListener() {
+
 			@Override
 			public void onComplete(DatabaseError error, DatabaseReference ref) {
 				// TODO Auto-generated method stub
-				System.out.println("Sucesso !");
+
 			}
 		});
 	}
@@ -90,10 +89,13 @@ public class IndexMBean {
 	}
 
 	public void setPlanilha(UploadedFile planilha) {
+
 		this.planilha = planilha;
-		String caminhoGravar = FacesContext.getCurrentInstance().getExternalContext().getRealPath("Excel arquivado");
+		String caminhoGravar = FacesContext.getCurrentInstance().getExternalContext().getApplicationContextPath();
 
 		File file = new File(caminhoGravar, planilha.getFileName());
+
+		System.out.println(file.getAbsolutePath());
 
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
@@ -108,7 +110,7 @@ public class IndexMBean {
 			e.printStackTrace();
 		}
 		planilhaFile = file;
-		System.out.println(file.getAbsolutePath());
+
 		new Thread(
 
 				new Runnable() {
@@ -136,6 +138,7 @@ public class IndexMBean {
 	}
 
 	private void salvar() throws IOException {
+
 		InputStream inputStream = new FileInputStream(planilhaFile);
 		XSSFWorkbook hssfWorkbook = new XSSFWorkbook(inputStream);
 		XSSFSheet hssfSheet = hssfWorkbook.getSheetAt(0);
@@ -146,27 +149,33 @@ public class IndexMBean {
 		XSSFRow row;
 		XSSFCell cell;
 
-		Iterator rows = hssfSheet.rowIterator();
+		Iterator<Row> rows = hssfSheet.rowIterator();
 
 		while (rows.hasNext()) {
 			row = (XSSFRow) rows.next();
 
-			Iterator cells = row.cellIterator();
+			Iterator<Cell> cells = row.cellIterator();
 
 			while (cells.hasNext()) {
 
 				cell = (XSSFCell) cells.next();
+
 				CellValue cellValue;
 
 				cellValue = formulaEvaluator.evaluate(cell);
+
 				CellReference reference = new CellReference(row.getRowNum(), cell.getColumnIndex());
+				String array[] = reference.getCellRefParts();
+
 				if (cellValue != null) {
-					salvarAlgumDado(cellValue.formatAsString(),
-							reference.getCellRefParts()[1] + reference.getCellRefParts()[2]);
+					salvarAlgumDado(cellValue.formatAsString(), array[2] + array[1]);
 				}
 
 			}
 		}
+
+		hssfWorkbook.close();
+
 	}
 
 }
