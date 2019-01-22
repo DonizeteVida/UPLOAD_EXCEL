@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -33,7 +34,7 @@ import com.google.firebase.database.DatabaseReference.CompletionListener;
 import com.google.firebase.database.FirebaseDatabase;
 
 @ManagedBean(name = "indexMBean")
-@SessionScoped
+@ViewScoped
 public class IndexMBean {
 	private String nome = "Importar planilha excel";
 	private UploadedFile planilha;
@@ -88,7 +89,12 @@ public class IndexMBean {
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
 				.setDatabaseUrl("https://graficosonline-5d22f.firebaseio.com/").build();
 
-		FirebaseApp.initializeApp(options);
+		try {
+			FirebaseApp.initializeApp(options);
+		} catch (IllegalStateException e) {
+
+		}
+
 	}
 
 	public void uploadPlanilha(FileUploadEvent fileUploadEvent) {
