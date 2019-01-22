@@ -65,6 +65,18 @@ public class IndexMBean {
 		});
 	}
 
+	private void salvarAlgumDado(Double valor, String chave) {
+
+		database.child(chave).setValue(valor, new CompletionListener() {
+
+			@Override
+			public void onComplete(DatabaseError error, DatabaseReference ref) {
+				// TODO Auto-generated method stub
+				System.out.println(error.toString());
+			}
+		});
+	}
+
 	private void initBanco() throws IOException {
 		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/json");
 
@@ -165,9 +177,22 @@ public class IndexMBean {
 
 				CellReference reference = new CellReference(row.getRowNum(), cell.getColumnIndex());
 				String array[] = reference.getCellRefParts();
+				String position = array[2] + array[1];
 
 				if (cellValue != null) {
-					salvarAlgumDado(cellValue.formatAsString(), array[2] + array[1]);
+					switch (cellValue.getCellType()) {
+					case STRING:
+						salvarAlgumDado(cellValue.getStringValue(), position);
+						break;
+
+					case NUMERIC:
+						salvarAlgumDado(cellValue.getNumberValue(), position);
+						break;
+
+					default:
+						break;
+					}
+
 				}
 
 			}
