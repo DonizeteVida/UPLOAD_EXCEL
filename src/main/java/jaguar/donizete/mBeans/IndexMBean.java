@@ -32,7 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseReference.CompletionListener;
 import com.google.firebase.database.FirebaseDatabase;
 
-@ManagedBean
+@ManagedBean(name = "indexMBean")
 @SessionScoped
 public class IndexMBean {
 	private String nome = "Importar planilha excel";
@@ -60,7 +60,7 @@ public class IndexMBean {
 			@Override
 			public void onComplete(DatabaseError error, DatabaseReference ref) {
 				// TODO Auto-generated method stub
-
+				System.out.println(error.toString());
 			}
 		});
 	}
@@ -68,10 +68,9 @@ public class IndexMBean {
 	private void initBanco() throws IOException {
 		String caminho = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/classes/json");
 
-		System.out.println(caminho);
-
 		FileInputStream serviceAccount = new FileInputStream(caminho + "/key.json");
-		serviceAccount.toString();
+
+		System.out.println(caminho);
 
 		FirebaseOptions options = new FirebaseOptions.Builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
